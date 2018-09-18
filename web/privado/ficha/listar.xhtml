@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/templates/template.xhtml">
+        <ui:define name="titulo">Manutenção de Fichas</ui:define>
+        <ui:define name="conteudo">
+            <h:form id="formListagem">
+                <h:panelGroup rendered="#{!controleFicha.editando}">
+                    <p:messages/>
+                    <p:commandButton value="Novo"
+                                     icon="ui-icon-plus"
+                                     actionListener="#{controleFicha.novo()}"
+                                     update="formEdicao formListagem"/>
+                    <p:dataTable value="#{controleFicha.dao.listaObjetos}"
+                                 var="obj" reflow="true" id="listagem">
+                        <f:facet name="header">                            
+                            <div class="ui-fluid">
+                                <p:panelGrid columns="7" styleClass="ui-panelgrid-blank" layout="grid"
+                                             columnClasses="col-md-1,col-md-2,col-md-1,col-md-3,col-md-2,col-md-2,col-md-1">
+                                    <p:outputLabel value="Ordem:" />
+                                    <p:selectOneMenu value="#{controleFicha.dao.ordem}">  
+                                        <f:selectItem itemLabel="ID" itemValue="id"/>   
+                                        <f:selectItem itemLabel="Tema" itemValue="tema"/>
+                                        <f:selectItem itemLabel="Aluno" itemValue="aluno.nome"/>
+                                        <f:selectItem itemLabel="Professor" itemValue="professor.nome"/>
+                                        <p:ajax update="listagem"/>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Filtro: "/>
+                                    <p:inputText value="#{controleFicha.dao.filtro}"/>                                                            
+                                    <p:commandButton value="Filtrar" update="listagem" icon="ui-icon-search"/>
+                                    <p:outputLabel value="Máximo de objetos:"/>
+                                    <p:inputNumber value="#{controleFicha.dao.maximoObjetos}" size="3"
+                                                   thousandSeparator="" decimalSeparator="" decimalPlaces="0">
+                                        <p:ajax event="blur" update="listagem"/> 
+                                    </p:inputNumber>
+                                </p:panelGrid>
+                            </div>                                            
+                        </f:facet>
+                        <f:facet name="footer"> 
+                            <p:outputLabel value="#{controleFicha.dao.mensagemNavegacao} &nbsp; &nbsp;"/>
+                            <p:commandButton action="#{controleFicha.dao.primeiro()}"
+                                             icon="ui-icon-seek-first" title="Primeiro" update="listagem"/>
+                            <p:commandButton action="#{controleFicha.dao.anterior()}"
+                                             icon="ui-icon-seek-prev" title="Anterior" update="listagem"/>
+                            <p:commandButton action="#{controleFicha.dao.proximo()}"
+                                             icon="ui-icon-seek-next" title="Próximo" update="listagem"/>
+                            <p:commandButton action="#{controleFicha.dao.ultimo()}"
+                                             icon="ui-icon-seek-end" title="Ultimo" update="listagem"/>                                                        
+                        </f:facet>	                         
+                        <p:column headerText="ID">
+                            <p:outputLabel value="#{obj.id}"/>
+                        </p:column>
+                        <p:column headerText="Tema">
+                            <p:outputLabel value="#{obj.tema}"/>
+                        </p:column>
+                        <p:column headerText="Semestre">
+                            <p:outputLabel value="#{obj.semestre}"/>
+                        </p:column>       
+                        <p:column headerText="Professor">
+                            <p:outputLabel value="#{obj.professor.nome}"/>
+                        </p:column>   
+                        <p:column headerText="Aluno">
+                            <p:outputLabel value="#{obj.aluno.nome}"/>
+                        </p:column> 
+                        <p:column headerText="Curso">
+                            <p:outputLabel value="#{obj.curso.descricao}"/>
+                        </p:column> 
+                        <p:column headerText="Tipo">
+                            <p:outputLabel value="#{obj.tipo.descricao}"/>
+                        </p:column> 
+                        <p:column headerText="Ações">
+                            <div align="center">
+                                <p:commandButton icon="ui-icon-pencil" 
+                                                 actionListener="#{controleFicha.alterar(obj.id)}"
+                                                 process="@this"
+                                                 update="formListagem :formEdicao"/>
+                                <p:commandButton icon="ui-icon-trash"
+                                                 actionListener="#{controleFicha.excluir(obj.id)}"
+                                                 process="@this"
+                                                 update="formListagem"/>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGroup>
+            </h:form>
+            <ui:include src="formulario.xhtml"/>
+        </ui:define>
+    </ui:composition>
+</html>
+

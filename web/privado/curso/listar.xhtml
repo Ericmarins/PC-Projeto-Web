@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/templates/template.xhtml">
+        <ui:define name="titulo">Manutenção de Cursos</ui:define>
+        <ui:define name="conteudo">
+            <h:form id="formListagem">
+                <h:panelGroup rendered="#{!controleCurso.editando}">
+                    <p:messages/>
+                    <p:commandButton value="Novo"
+                                     icon="ui-icon-plus"
+                                     actionListener="#{controleCurso.novo()}"
+                                     update="formEdicao formListagem"/>
+                    <p:dataTable value="#{controleCurso.dao.listaObjetos}"
+                                 var="obj" reflow="true" id="listagem">
+                        <f:facet name="header">                            
+                            <div class="ui-fluid" >
+                                <p:panelGrid columns="7" styleClass="ui-panelgrid-blank" layout="grid"
+                                             columnClasses="col-md-1,col-md-2,col-md-1,col-md-3,col-md-2,col-md-2,col-md-1">
+                                    <p:outputLabel value="Ordem:" />
+                                    <p:selectOneMenu value="#{controleCurso.dao.ordem}">  
+                                        <f:selectItem itemLabel="ID" itemValue="id"/>   
+                                        <f:selectItem itemLabel="Descrição" itemValue="descricao"/>
+                                        <p:ajax update="listagem"/>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Filtro: "/>
+                                    <p:inputText value="#{controleCurso.dao.filtro}"/>                                                            
+                                    <p:commandButton value="Filtrar" update="listagem" icon="ui-icon-search"/>
+                                    <p:outputLabel value="Máximo de objetos:"/>
+                                    <p:inputNumber value="#{controleCurso.dao.maximoObjetos}" size="3"
+                                                   thousandSeparator="" decimalSeparator="" decimalPlaces="0">
+                                        <p:ajax event="blur" update="listagem"/> 
+                                    </p:inputNumber>
+                                </p:panelGrid>
+                            </div>                                            
+                        </f:facet>
+                        <f:facet name="footer"> 
+                            <p:outputLabel value="#{controleCurso.dao.mensagemNavegacao} &nbsp; &nbsp;"/>
+                            <p:commandButton action="#{controleCurso.dao.primeiro()}"
+                                             icon="ui-icon-seek-first" title="Primeiro" update="listagem"/>
+                            <p:commandButton action="#{controleCurso.dao.anterior()}"
+                                             icon="ui-icon-seek-prev" title="Anterior" update="listagem"/>
+                            <p:commandButton action="#{controleCurso.dao.proximo()}"
+                                             icon="ui-icon-seek-next" title="Próximo" update="listagem"/>
+                            <p:commandButton action="#{controleCurso.dao.ultimo()}"
+                                             icon="ui-icon-seek-end" title="Ultimo" update="listagem"/>                                                        
+                        </f:facet>	                         
+                        <p:column headerText="ID">
+                            <p:outputLabel value="#{obj.id}"/>
+                        </p:column>
+                        <p:column headerText="Descrição">
+                            <p:outputLabel value="#{obj.descricao}"/>
+                        </p:column>
+                        <p:column headerText="Ações">
+                            <div align="center">
+                                <p:commandButton icon="ui-icon-pencil" 
+                                                 actionListener="#{controleCurso.alterar(obj.id)}"
+                                                 process="@this"
+                                                 update="formListagem :formEdicao"/>
+                                <p:commandButton icon="ui-icon-trash"
+                                                 actionListener="#{controleCurso.excluir(obj.id)}"
+                                                 process="@this"
+                                                 update="formListagem"/>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGroup>
+            </h:form>
+            <ui:include src="formulario.xhtml"/>
+        </ui:define>
+    </ui:composition>
+</html>
+
