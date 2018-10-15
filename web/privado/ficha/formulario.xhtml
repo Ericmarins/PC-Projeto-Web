@@ -93,12 +93,12 @@
                                  id="txtAssuntos"/>
                         <p:outputLabel value="Hora inicial" for="txtInicio"/>
                         <p:calendar id="txtInicio" value="#{controleFicha.encontro.horaInicial}"
-                                mask="true" pattern="HH:mm" navigator="true">
+                                mask="true" pattern="HH:mm" timeOnly="true">
                             <f:converter converterId="converterHora"/>
                         </p:calendar>
                         <p:outputLabel value="Hora final" for="txtFinal"/>
                         <p:calendar id="txtFinal" value="#{controleFicha.encontro.horaFinal}"
-                                mask="true" pattern="HH:mm" navigator="true">
+                                mask="true" pattern="HH:mm" timeOnly="true">
                             <f:converter converterId="converterHora"/>
                         </p:calendar>
                         <p:commandButton value="Salvar Encontro" icon="ui-icon-disk"
@@ -167,16 +167,19 @@
                             <f:converter converterId="converterCalendar"/>
                         </p:calendar>
                         <p:outputLabel value="Versão Atual" for="txtVersaoAtual"/>
-                        <p:fileUpload value="#{controleFicha.documento.versaoAtual}"
-                                 id="txtVersaoAtual"/>
+                        <p:fileUpload  mode="advanced" id="txtVersaoAtual" auto="true" 
+                                     label="Selecionar"
+                                    fileUploadListener="#{controleFicha.enviarVersao}"/>
                         <p:outputLabel value="Data revisão" for="txtDataRevisao"/>
                         <p:calendar id="txtDataRevisao" value="#{controleFicha.documento.dataRevisao}"
                                 mask="true" pattern="dd/MM/yyyy" navigator="true">
                             <f:converter converterId="converterCalendar"/>
                         </p:calendar>
                         <p:outputLabel value="Revisão" for="txtRevisao"/>
-                        <p:fileUpload value="#{controleFicha.documento.revisao}"
-                                 id="txtRevisao"/>
+                        <p:fileUpload  mode="advanced" id="txtRevisao" auto="true" 
+                                    
+                                       label="Selecionar"
+                                    fileUploadListener="#{controleFicha.enviarRevisao}"/>
                         <p:commandButton value="Salvar Documento" icon="ui-icon-disk"
                                          actionListener="#{controleFicha.salvarDocumento()}"
                                          id="btnAdicionarDocumento"
@@ -192,7 +195,7 @@
                                          update="listagemDocumento painelDocumento"
                                          process="@this"/>
                         <p:dataTable value="#{controleFicha.objeto.documentos}" var="doc"
-                                     reflow="true" rowIndexVar="idx">
+                                     reflow="true" rowIndexVar="idxDoc">
                             <f:facet name="header">
                                 <p:outputLabel value="Documentos"/>
                             </f:facet>
@@ -202,7 +205,8 @@
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Versão Atual">
-                                <p:outputLabel value="#{doc.versaoAtual}"/>
+                                <p:commandLink action="#{controleFicha.downloadVersao(idxDoc)}"
+                                                   value="Versão PC" ajax="false"/> 
                             </p:column>
                             <p:column headerText="Data Revisão">
                                 <p:outputLabel value="#{doc.dataRevisao}">
@@ -210,15 +214,16 @@
                                 </p:outputLabel>
                             </p:column>
                             <p:column headerText="Revisão">
-                                <p:outputLabel value="#{doc.revisao}"/>
+                                <p:commandLink action="#{controleFicha.downloadRevisao(idxDoc)}"
+                                                   value="Revisão PC" ajax="false"/> 
                             </p:column> 
                             <p:column headerText="Ações">
                                 <div align="center">
                                     <p:commandButton icon="ui-icon-pencil"
-                                                     actionListener="#{controleFicha.alterarDocumento(idx)}"
+                                                     actionListener="#{controleFicha.alterarDocumento(idxDoc)}"
                                                      process="@this" update="@form"/>
                                     <p:commandButton icon="ui-icon-trash"
-                                                     actionListener="#{controleFicha.removerDocumento(idx)}"
+                                                     actionListener="#{controleFicha.removerDocumento(idxDoc)}"
                                                      process="@this" update="@form"/>
                                 </div>
                             </p:column>

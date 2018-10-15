@@ -10,10 +10,21 @@ import br.edu.ifsul.modelo.Documento;
 import br.edu.ifsul.modelo.Ficha;
 import br.edu.ifsul.modelo.Tipo;
 import br.edu.ifsul.modelo.Usuario;
+import br.edu.ifsul.util.UtilRelatorios;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
+import org.primefaces.event.FileUploadEvent;
 
 /**
  *
@@ -47,6 +58,18 @@ public class ControleFicha implements Serializable {
     public String listar(){
         editando = false;
         return "/privado/ficha/listar?faces-redirect=true";
+    }
+    
+    public void imprimir(Integer id){
+        try {
+            objeto= dao.getObjectById(id);
+        } catch (Exception ex) {
+            Logger.getLogger(ControleFicha.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        List<Ficha> lista= new ArrayList<>();
+        lista.add(objeto);
+        HashMap parametros= new HashMap();
+        UtilRelatorios.imprimeRelatorio("RelatorioFicha", parametros, lista);
     }
     
     public void novo(){
@@ -144,6 +167,64 @@ public class ControleFicha implements Serializable {
     public void removerDocumento(int idx){
         objeto.removerDocumento(idx);
         Util.mensagemInformacao("Documento removido com sucesso!");
+    }
+    
+    public void enviarVersao(FileUploadEvent event) {
+        try {
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+            FacesContext aFacesContext = FacesContext.getCurrentInstance().getCurrentInstance();
+            ServletContext context = (ServletContext) aFacesContext.getExternalContext().getContext();
+            documento.setVersaoAtual(event.getFile().getContents());
+            Util.mensagemInformacao("Arquivo enviado com sucesso!");
+        } catch (Exception ex) {
+            Util.mensagemErro("Erro ao enviar arquivo: " + ex.getMessage());
+        }
+    }
+    
+    public void downloadVersao(int index) {
+        documento = objeto.getDocumentos().get(index);
+        byte[] download = (byte[]) documento.getVersaoAtual();
+        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+        response.addHeader("Content-Disposition", "attachment; filename=versaoPC"+documento.getDataVersao());
+        response.setContentLength(download.length);
+        try {
+            response.setContentType("application/octet-stream");
+            response.getOutputStream().write(download);
+            response.getOutputStream().flush();
+            FacesContext.getCurrentInstance().responseComplete();
+        } catch (Exception e) {            
+            Util.mensagemErro("Erro no download do arquivo: " +  Util.getMensagemErro(e));
+        }
+    }  
+    
+    public void enviarRevisao(FileUploadEvent event) {
+        try {
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+            FacesContext aFacesContext = FacesContext.getCurrentInstance().getCurrentInstance();
+            ServletContext context = (ServletContext) aFacesContext.getExternalContext().getContext();
+            documento.setRevisao(event.getFile().getContents());
+            Util.mensagemInformacao("Arquivo enviado com sucesso!");
+        } catch (Exception ex) {
+            Util.mensagemErro("Erro ao enviar arquivo: " + ex.getMessage());
+        }
+    }
+    
+    public void downloadRevisao(int index) {
+        documento = objeto.getDocumentos().get(index);
+        byte[] download = (byte[]) documento.getRevisao();
+        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+        response.addHeader("Content-Disposition", "attachment; filename=revisaoPC"+documento.getDataRevisao());
+        response.setContentLength(download.length);
+        try {
+            response.setContentType("application/octet-stream");
+            response.getOutputStream().write(download);
+            response.getOutputStream().flush();
+            FacesContext.getCurrentInstance().responseComplete();
+        } catch (Exception e) {            
+            Util.mensagemErro("Erro no download do arquivo: " +  Util.getMensagemErro(e));
+        }
     }
     
     public FichaDAO<Ficha> getDao() {

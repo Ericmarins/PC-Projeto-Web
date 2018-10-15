@@ -20,6 +20,7 @@ public class ConverterHora implements Serializable, Converter {
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String string) {
         try {
+            System.out.println("Hora gesAsObject: "+string);
             Calendar retorno = Calendar.getInstance();
             retorno.setTime(sdf.parse(string));
             return retorno;
