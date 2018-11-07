@@ -186,7 +186,7 @@ public class ControleFicha implements Serializable {
         documento = objeto.getDocumentos().get(index);
         byte[] download = (byte[]) documento.getVersaoAtual();
         HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-        response.addHeader("Content-Disposition", "attachment; filename=versaoPC"+documento.getDataVersao());
+        response.addHeader("Content-Disposition", "attachment; filename=versaoPC");
         response.setContentLength(download.length);
         try {
             response.setContentType("application/octet-stream");
@@ -215,7 +215,7 @@ public class ControleFicha implements Serializable {
         documento = objeto.getDocumentos().get(index);
         byte[] download = (byte[]) documento.getRevisao();
         HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-        response.addHeader("Content-Disposition", "attachment; filename=revisaoPC"+documento.getDataRevisao());
+        response.addHeader("Content-Disposition", "attachment; filename=revisaoPC");
         response.setContentLength(download.length);
         try {
             response.setContentType("application/octet-stream");

@@ -6,6 +6,7 @@
 package br.edu.ifsul.util;
 
 import br.edu.ifsul.controle.Util;
+import com.sun.corba.se.impl.util.Utility;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -48,8 +49,10 @@ public class UtilRelatorios {
             res.getCharacterEncoding();
             FacesContext.getCurrentInstance().responseComplete();
         } catch (Exception e) {
-            Util.mensagemErro("Erro ao gerar relatorio: " + 
-                    Util.getMensagemErro(e));
+            e.printStackTrace();
+           // Util.mensagemErro("Erro ao gerar relatorio: " + 
+             //       Util.getMensagemErro(e));
+            
         }
     }
 }
