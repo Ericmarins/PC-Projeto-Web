@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:form id="formEdicao">
+        <p:dialog header="Edição de Informações" widgetVar="dlgInfo" 
+                  resizable="false" responsive="true" modal="true" style="position:absolute; width: available">
+            <h:panelGroup rendered="#{controleUsuario.editando}">
+                <div class="ui-fluid">
+                    <p:messages id="messages"/>
+                    <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-20"
+                                 layout="grid" styleClass="ui-panelgrid-blank">
+                        <p:outputLabel value="Nome" for="txtNome"/>
+                        <p:inputText value="#{controleUsuario.objeto.nome}"
+                                     id="txtNome" size="30" maxlength="50"/>
+                        <p:outputLabel value="Email" for="txtEmail"/>
+                        <p:inputText value="#{controleUsuario.objeto.email}"
+                                     id="txtEmail" size="30" maxlength="50"/> 
+                        <p:outputLabel value="Telefone" for="txtTelefone"/>
+                        <p:inputText value="#{controleUsuario.objeto.telefone}"
+                                     id="txtTelefone" size="13" maxlength="11"/> 
+                        <p:outputLabel value="Senha" for="txtSenha"/>
+                        <p:password value="#{controleUsuario.objeto.senha}" redisplay="true"
+                                    id="txtSenha" size="13" maxlength="20"/> 
+                        <p:outputLabel/>
+                        <p:commandButton value="Salvar"
+                                         icon="ui-icon-disk"
+                                         actionListener="#{controleUsuario.salvar()}"
+                                         update="formEdicao :formIndex:formInfo"
+                                         ajax="false"
+                                         oncomplete="if(!args.validationFailed){PF('dlgInfo').hide();}"/>
+                    </p:panelGrid>
+                </div>
+            </h:panelGroup>
+        </p:dialog>
+    </h:form>
+</html>
+

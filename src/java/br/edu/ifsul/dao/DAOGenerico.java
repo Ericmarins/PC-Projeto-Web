@@ -14,6 +14,7 @@ public class DAOGenerico<TIPO> implements Serializable {
 
     private List<TIPO> listaObjetos;
     private List<TIPO> listaTodos;
+    private List<TIPO> listaFichasUsuario;
     @PersistenceContext(unitName = "PC-WebPU")
     protected EntityManager em;
     protected Class classePersistente;
@@ -173,6 +174,16 @@ public class DAOGenerico<TIPO> implements Serializable {
 
     public void setTotalObjetos(Integer totalObjetos) {
         this.totalObjetos = totalObjetos;
+    }
+
+    public List<TIPO> getListaFichasUsuario(Integer id) {
+        String jpql = "from " + classePersistente.getSimpleName();
+        jpql += " where (professor = "+ id + " or aluno= "+ id +" or coorientador = "+ id +")";
+        return em.createQuery(jpql).getResultList();
+    }
+
+    public void setListaFichasUsuario(List<TIPO> listaFichasUsuario) {
+        this.listaFichasUsuario = listaFichasUsuario;
     }
 
 }

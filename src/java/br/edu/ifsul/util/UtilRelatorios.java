@@ -41,17 +41,15 @@ public class UtilRelatorios {
                     FacesContext.getCurrentInstance().getExternalContext().getResponse();
             res.setContentType("application/pdf");
             int codigo = (int) (Math.random() * 1000);
-            //Código abaixo gerar o relatório e disponibiliza diretamente na página   
+            //Código abaixo gera o relatório e disponibiliza diretamente na página   
             res.setHeader("Content-disposition", "inline;filename=relatorio_" + codigo + ".pdf");
-            //Código abaixo gerar o relatório e disponibiliza para o cliente baixar ou salvar                
-            //res.setHeader("Content-disposition", "attachment;filename=relatorio_" + codigo + ".pdf");
+
             res.getOutputStream().write(b);
             res.getCharacterEncoding();
             FacesContext.getCurrentInstance().responseComplete();
         } catch (Exception e) {
             e.printStackTrace();
-           // Util.mensagemErro("Erro ao gerar relatorio: " + 
-             //       Util.getMensagemErro(e));
+
             
         }
     }

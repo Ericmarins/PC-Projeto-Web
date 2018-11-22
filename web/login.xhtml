@@ -5,29 +5,47 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-    <ui:composition template="/templates/template.xhtml">
-        <ui:define name="titulo">Login do Sistema</ui:define>
-        <ui:define name="conteudo">
-            <h:form>
-                <p:messages/>
-                <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-5"
-                    layout="grid" styleClass="ui-panelgrid-blank">
-                    <f:facet name="header">
-                        <p:outputLabel value="Login de Usuário"/>
-                    </f:facet>
-                    <f:facet name="footer">
-                        <div aling="center">
-                            <p:commandButton value="Efetuar Login"
-                                             action="#{controleLogin.efetuarLogin()}"
-                                             ajax="false"/>
-                        </div>
-                    </f:facet>
-                    <p:outputLabel value="Usuário" for="txtUsuario"/>
-                    <p:inputText id="txtUsuario" value="#{controleLogin.nick}"/>
-                    <p:outputLabel value="Senha" for="txtSenha"/>
-                    <p:password id="txtSenha" value="#{controleLogin.password}"/>
-                </p:panelGrid>
-            </h:form>
-        </ui:define>
-    </ui:composition>      
+    <h:head>
+        <style type='text/css'>
+
+#formLogin {
+   position:absolute;
+   left:50%;
+   top:50%;
+   margin-left:-165px;
+   margin-top:-100px;
+}
+
+ </style>
+    </h:head>
+
+    <h:body style=" background-color: honeydew;" >
+        <h:form id="formLogin">
+            <p:growl id="growl-mensagem" showDetail="true" sticky="true" /> 
+            <p:panel id="panel-login-principal" 
+                     header="Autenticação do Sistema" 
+                     style="width:330px;">
+                <h:panelGrid columns="2" >
+
+                    <h:graphicImage url="/resources/imagens/ifsul.png" width="100"/>
+
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Usuário" for="txtUsuario"/>
+                        <p:inputText id="txtUsuario" value="#{controleLogin.nick}" size="10"/>
+
+                        <p:outputLabel value="Senha" for="txtSenha"/>
+                        <p:password id="txtSenha" value="#{controleLogin.password}" size="10"/>
+
+                        &nbsp;
+                        <p:commandButton value="Login"
+                                         action="#{controleLogin.efetuarLogin()}"
+                                         ajax="false"/>
+
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:panel>
+
+        </h:form>
+    </h:body>
+
 </html>

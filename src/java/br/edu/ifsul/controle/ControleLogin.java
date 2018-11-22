@@ -66,7 +66,7 @@ public class ControleLogin implements Serializable{
         }catch(Exception e){
             Util.mensagemErro("Erro: "+ Util.getMensagemErro(e));
         }
-        return "/index";
+        return "/login";
     }
     
     public Usuario getUsuarioAutenticado() {

@@ -2,11 +2,112 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
     <ui:composition template="/templates/template.xhtml">
-        <ui:define name="titulo">Sistema com BootsFaces</ui:define>
+        <ui:define name="titulo">Sistema PC</ui:define>
         <ui:define name="conteudo">
-            <h1>Seja bem vindo!</h1>
+            <h:form id="formIndex" rendered="#{controleLogin.usuarioAutenticado != null}"> 
+                <p:messages/>
+                <h:form id="formInfo">
+                    <p:panelGrid columns="1" >
+                        <f:facet name="header">
+                            <h:outputText value="Informações do Usuário"/>
+                        </f:facet>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Nome: "/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{controleFicha.daoUsuario.getObjectById(controleLogin.usuarioAutenticado.id).nome}" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Email: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{controleFicha.daoUsuario.getObjectById(controleLogin.usuarioAutenticado.id).email}" /> 
+                            </p:column>
+                        </p:row>
+                        <p:row>   
+                            <p:column>
+                                <h:outputText value="Telefone: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{controleFicha.daoUsuario.getObjectById(controleLogin.usuarioAutenticado.id).telefone}" />  
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <div align="center">
+                                    <p:commandButton icon="ui-icon-pencil" 
+                                                     value="Editar Informações"
+                                                     actionListener="#{controleUsuario.alterar(controleLogin.usuarioAutenticado.id)}"
+                                                     process="@this"
+                                                     update="formIndex:formInfo :formEdicao"
+                                                     oncomplete="PF('dlgInfo').show();"/>
+                                </div>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </h:form>
+                <h:form id="formFicha" style="position: absolute; width:available; ">                  
+                    <p:dataList value="#{controleFicha.dao.getListaFichasUsuario(controleLogin.usuarioAutenticado.id)}" 
+                                var="obj" type="definition" emptyMessage="Você não possui nenhuma ficha.">
+                        <f:facet name="header" >                                    
+                            <p:commandButton value="Novo" icon="ui-icon-plus" 
+                                             process="@this"
+                                             actionListener="#{controleFicha.novo()}"
+                                             oncomplete="PF('dlgFicha').show();" 
+                                             update=":formEdicaoFicha"
+                                             rendered="#{p:ifGranted('PROFESSOR')}"/>
+                            <p:outputLabel value="Minhas Fichas"/>  
+                        </f:facet>
+                        <p:panel toggleable="true" toggleSpeed="500" collapsed="true">
+                            <f:facet name="header">                                
+                                <p:menuButton icon="ui-icon-gear">
+                                    <p:menuitem icon="ui-icon-pencil" 
+                                                value="&ensp;Editar"
+                                                actionListener="#{controleFicha.alterar(obj.id)}"
+                                                process="@this" 
+                                                update=":formEdicaoFicha"
+                                                oncomplete="PF('dlgFicha').show();"/>
+                                    <p:menuitem icon="ui-icon-trash"
+                                                value="&ensp;Excluir"
+                                                actionListener="#{controleFicha.excluir(obj.id)}"
+                                                process="@this"
+                                                update="formIndex:formFicha"
+                                                rendered="#{p:ifGranted('PROFESSOR')}"/>
+                                    <p:menuitem icon="ui-icon-print"
+                                                value="&ensp;Relatório"
+                                                actionListener="#{controleFicha.imprimir(obj.id)}"
+                                                target="_blank"
+                                                ajax="false"/>                                   
+                                </p:menuButton> 
+                                <h:outputText value="&ensp;Tema: #{obj.tema}"/>
+                            </f:facet>
+                            <p:panelGrid columns="2">            
+                                <h:outputText value="Curso:"/>
+                                <h:outputText value="#{obj.curso.descricao}"/>
+                                <h:outputText value="Semestre:"/>
+                                <h:outputText value="#{obj.semestre}"/>
+                                <h:outputText value="Professor:"/>
+                                <h:outputText value="#{obj.professor.nome}"/>
+                                <h:outputText value="Aluno:"/>
+                                <h:outputText value="#{obj.aluno.nome}"/>
+                                <h:outputText value="Tipo:"/>
+                                <h:outputText value="#{obj.tipo.descricao}"/>
+                            </p:panelGrid>
+                        </p:panel>
+                    </p:dataList>
+                </h:form>
+            </h:form>
+
+            <ui:include src="formularioUsuario.xhtml"/>
+            <ui:include src="formularioFicha.xhtml"/>
         </ui:define>
     </ui:composition>      
 </html>

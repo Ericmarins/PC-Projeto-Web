@@ -8,14 +8,15 @@
     <h:head>
         <title><ui:insert name="titulo"> </ui:insert></title>
     </h:head>
-    <h:body>
+    <h:body style="background-color: honeydew;">
         <b:container>
             <h:form id="formMenu">
-                <b:navBar brand="PC">
+                <b:navBar>
+                    <img src="#{request.contextPath}/resources/imagens/logoIF.png" height="25" alt="PC" class="navbar-brand"/>
                     <b:navbarLinks>
                         <b:navLink icon="home" outcome="#{controleLogin.home()}"/>
                         <b:dropMenu value="Cadastros"
-                                    rendered="#{controleLogin.usuarioAutenticado != null}">
+                                    rendered="#{p:ifGranted('ADMINISTRADOR')}">
                             <b:navCommandLink value="Usuários" ajax="false"
                                               action="#{controleUsuario.listar()}"/> 
                             <b:navCommandLink value="Cursos" ajax="false"
@@ -37,7 +38,6 @@
                                               rendered="#{controleLogin.usuarioAutenticado != null}"/>
                         </b:dropMenu>
                     </b:navbarLinks>
-                    
                 </b:navBar>
             </h:form>
             <ui:insert name="conteudo">

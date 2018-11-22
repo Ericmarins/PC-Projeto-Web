@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:dialog header="Edição de Fichas" widgetVar="dlgFicha" dynamic="true" position="center"
+              resizable="false" responsive="true" modal="true" style="position:absolute; width: auto">
+        <h:form id="formEdicaoFicha" rendered="#{controleFicha.editando}"> 
+            <p:tabView>
+                <p:messages id="messages"/>
+                <div class="ui-fluid container">
+                    <p:tab title="Dados Ficha">
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-4, ui-grid-col-20"
+                                     layout="grid" styleClass="ui-panelgrid-blank">                            
+                            <p:outputLabel value="Tema" for="txtTema"/>
+                            <p:inputText value="#{controleFicha.objeto.tema}"
+                                         id="txtTema" size="50" maxlength="50" disabled="#{!p:ifGranted('PROFESSOR')}"/>
+                            <p:outputLabel value="Semestre" for="txtSemestre"/>
+                            <p:inputText value="#{controleFicha.objeto.semestre}"
+                                         id="txtSemestre" size="15" maxlength="15" disabled="#{!p:ifGranted('PROFESSOR')}"/> 
+                            <p:outputLabel value="Curso" for="selectCurso"/>
+                            <p:selectOneMenu value="#{controleFicha.objeto.curso}"
+                                             id="selectCurso" filter="true" filterMatchMode="startsWith"
+                                             disabled="#{!p:ifGranted('PROFESSOR')}">
+                                <f:converter converterId="converterCurso"/>
+                                <f:selectItem itemLabel="Selecione um registro"
+                                              noSelectionOption="true" />
+                                <f:selectItems value="#{controleFicha.daoCurso.listaTodos}"
+                                               var="c" itemLabel="#{c.descricao}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Tipo" for="selectTipo"/>
+                            <p:selectOneMenu value="#{controleFicha.objeto.tipo}"
+                                             id="selectTipo" filter="true" filterMatchMode="startsWith"
+                                             disabled="#{!p:ifGranted('PROFESSOR')}">
+                                <f:converter converterId="converterTipo"/>
+                                <f:selectItem itemLabel="Selecione um registro"
+                                              noSelectionOption="true"/>
+                                <f:selectItems value="#{controleFicha.daoTipo.listaTodos}"
+                                               var="t" itemLabel="#{t.descricao}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Professor" for="selectProfessor"/>
+                            <p:selectOneMenu value="#{controleFicha.objeto.professor}"
+                                             id="selectProfessor" filter="true" filterMatchMode="startsWith"
+                                             disabled="#{!p:ifGranted('PROFESSOR')}">
+                                <f:converter converterId="converterUsuario"/>
+                                <f:selectItem itemLabel="Selecione um registro"
+                                              noSelectionOption="true"/>
+                                <f:selectItems value="#{controleFicha.daoUsuario.listaTodos}"
+                                               var="p" itemLabel="#{p.nome}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Aluno" for="selectAluno"/>
+                            <p:selectOneMenu value="#{controleFicha.objeto.aluno}"
+                                             id="selectAluno" filter="true" filterMatchMode="startsWith"
+                                             disabled="#{!p:ifGranted('PROFESSOR')}">
+                                <f:converter converterId="converterUsuario"/>
+                                <f:selectItem itemLabel="Selecione um registro"
+                                              noSelectionOption="true"/>
+                                <f:selectItems value="#{controleFicha.daoUsuario.listaTodos}"
+                                               var="a" itemLabel="#{a.nome}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Coorientador" for="selectCoorientador"/>
+                            <p:selectOneMenu value="#{controleFicha.objeto.coorientador}"
+                                             id="selectCoorientador" filter="true" filterMatchMode="startsWith"
+                                             disabled="#{!p:ifGranted('PROFESSOR')}">
+                                <f:converter converterId="converterUsuario"/>
+                                <f:selectItem itemLabel="Selecione um registro"
+                                              noSelectionOption="true"/>
+                                <f:selectItems value="#{controleFicha.daoUsuario.listaTodos}"
+                                               var="co" itemLabel="#{co.nome}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid> 
+                    </p:tab>
+                    <p:tab title="Encontros">
+                        <h:panelGroup id="listagemEncontro">
+                            <h:panelGroup rendered="#{!controleFicha.editandoEncontro}">
+                                <p:commandButton value="Novo Encontro"
+                                                 actionListener="#{controleFicha.novoEncontro()}"
+                                                 process="@this"
+                                                 update="painelEncontro listagemEncontro"
+                                                 rendered="#{p:ifGranted('PROFESSOR')}"/>
+                                <p:dataTable value="#{controleFicha.objeto.encontros}" var="encs"
+                                             reflow="true" rowIndexVar="idxs">
+                                    <p:column headerText="Data">
+                                        <p:outputLabel value="#{encs.dia}">
+                                            <f:converter converterId="converterCalendar"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Assuntos">
+                                        <p:outputLabel value="#{encs.assuntos}"/>
+                                    </p:column>
+                                    <p:column headerText="Hora inicial">
+                                        <p:outputLabel value="#{encs.horaInicial}">
+                                            <f:converter converterId="converterHora"/>
+                                        </p:outputLabel>
+                                    </p:column>  
+                                    <p:column headerText="Hora final">
+                                        <p:outputLabel value="#{encs.horaFinal}" >
+                                            <f:converter converterId="converterHora"/>
+                                        </p:outputLabel>
+                                    </p:column> 
+                                    <p:column headerText="Ações" rendered="#{p:ifGranted('PROFESSOR')}">
+                                        <div align="center">
+                                            <p:commandButton icon="ui-icon-pencil"
+                                                             actionListener="#{controleFicha.alterarEncontro(idxs)}"
+                                                             process="@this" 
+                                                             update="@form"/>
+                                            <p:commandButton icon="ui-icon-trash"
+                                                             actionListener="#{controleFicha.removerEncontro(idxs)}"
+                                                             ajax="true"
+                                                             process="@this" 
+                                                             update="@form"/>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <h:panelGroup id="painelEncontro">
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-5, ui-grid-col-20"
+                                         layout="grid" styleClass="ui-panelgrid-blank"
+                                         rendered="#{controleFicha.editandoEncontro}">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Edição de encontros"/>
+                                </f:facet>
+                                <p:outputLabel value="Data" for="txtData"/>
+                                <p:calendar id="txtData" value="#{controleFicha.encontro.dia}"
+                                            mask="true" pattern="dd/MM/yyyy" navigator="true">
+                                    <f:converter converterId="converterCalendar"/>
+                                </p:calendar>
+                                <p:outputLabel value="Assuntos" for="txtAssuntos"/>
+                                <p:inputTextarea value="#{controleFicha.encontro.assuntos}"
+                                                 id="txtAssuntos"/>
+                                <p:outputLabel value="Hora inicial" for="txtInicio"/>
+                                <p:calendar id="txtInicio" value="#{controleFicha.encontro.horaInicial}"
+                                            mask="true" pattern="HH:mm" timeOnly="true">
+                                    <f:converter converterId="converterHora"/>
+                                </p:calendar>
+                                <p:outputLabel value="Hora final" for="txtFinal"/>
+                                <p:calendar id="txtFinal" value="#{controleFicha.encontro.horaFinal}"
+                                            mask="true" pattern="HH:mm" timeOnly="true">
+                                    <f:converter converterId="converterHora"/>
+                                </p:calendar>
+                                <p:commandButton value="Salvar Encontro" icon="ui-icon-disk"
+                                                 actionListener="#{controleFicha.salvarEncontro()}"
+                                                 id="btnAdicionarEncontro"
+                                                 process="btnAdicionarEncontro painelEncontro"
+                                                 update="listagemEncontro painelEncontro"/>
+                            </p:panelGrid>
+                        </h:panelGroup>
+
+                    </p:tab>
+                    <p:tab title="Documentos">
+                        <h:panelGroup id="listagemDocumento">
+                            <h:panelGroup rendered="#{!controleFicha.editandoDocumento}">
+                                <p:commandButton value="Novo Documento"
+                                                 actionListener="#{controleFicha.novoDocumento()}"
+                                                 update="listagemDocumento painelDocumento"
+                                                 process="@this"/>
+                                <p:dataTable value="#{controleFicha.objeto.documentos}" var="docs"
+                                             reflow="true" rowIndexVar="idxDocs" id="listaDocs">
+                                    <p:column headerText="Data Versão Atual">
+                                        <p:outputLabel value="#{docs.dataVersao}">
+                                            <f:converter converterId="converterCalendar"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Versão Atual">
+                                        <p:commandLink action="#{controleFicha.downloadVersao(idxDocs)}"
+                                                       value="Versão PC" ajax="false"
+                                                       rendered="#{controleFicha.objeto.documentos.get(idxDocs).versaoAtual != null}"/> 
+                                    </p:column>
+                                    <p:column headerText="Data Revisão">
+                                        <p:outputLabel value="#{docs.dataRevisao}" >
+                                            <f:converter converterId="converterCalendar"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Revisão">
+                                        <p:commandLink action="#{controleFicha.downloadRevisao(idxDocs)}"
+                                                       value="Revisão PC" ajax="false" 
+                                                       rendered="#{controleFicha.objeto.documentos.get(idxDocs).revisao != null}"/> 
+                                    </p:column> 
+                                    <p:column headerText="Ações">
+                                        <div align="center">
+                                            <p:commandButton icon="ui-icon-pencil"
+                                                             actionListener="#{controleFicha.alterarDocumento(idxDoc)}"
+                                                             process="@this" update="@form"/>
+                                            <p:commandButton icon="ui-icon-trash"
+                                                             actionListener="#{controleFicha.removerDocumento(idxDoc)}"
+                                                             process="@this" update="@form"/>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGroup>
+                        </h:panelGroup>
+
+                        <h:panelGroup id="painelDocumento">
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-4, ui-grid-col-20"
+                                         layout="grid" styleClass="ui-panelgrid-blank"
+                                         rendered="#{controleFicha.editandoDocumento}">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Edição de documento"/>
+                                </f:facet>
+                                <p:outputLabel value="Versão Atual" for="txtVersaoAtual"/>
+                                <p:fileUpload  mode="advanced" id="txtVersaoAtual" auto="true" 
+                                               label="Selecionar"
+                                               fileUploadListener="#{controleFicha.enviarVersao}"
+                                               disabled="#{!p:ifGranted('ALUNO')}"/>
+                                <p:outputLabel value="Revisão" for="txtRevisao"/>
+                                <p:fileUpload  mode="advanced" id="txtRevisao" auto="true" 
+                                               label="Selecionar"
+                                               fileUploadListener="#{controleFicha.enviarRevisao}"
+                                               disabled="#{!p:ifGranted('PROFESSOR')}"/>
+                                <p:commandButton value="Salvar Documento" icon="ui-icon-disk"
+                                                 actionListener="#{controleFicha.salvarDocumento()}"
+                                                 id="btnAdicionarDocumento"
+                                                 process="btnAdicionarDocumento painelDocumento"
+                                                 update="messages painelDocumento listagemDocumento"/>
+                            </p:panelGrid>                      
+                        </h:panelGroup>
+
+                    </p:tab>
+                </div>
+            </p:tabView>
+            <p:panel>
+                <div align="center">
+                    <p:commandButton value="Salvar" 
+                                     icon="ui-icon-disk"
+                                     actionListener="#{controleFicha.salvar()}"
+                                     update="@form :formIndex"
+                                     ajax="false"
+                                     oncomplete="if (!args.validationFailed){PF('dlgFicha').hide();}"/>
+                </div>
+            </p:panel>
+
+        </h:form>
+    </p:dialog>
+</html>
+

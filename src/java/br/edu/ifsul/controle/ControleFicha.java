@@ -13,6 +13,7 @@ import br.edu.ifsul.modelo.Usuario;
 import br.edu.ifsul.util.UtilRelatorios;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -62,6 +63,7 @@ public class ControleFicha implements Serializable {
     
     public void imprimir(Integer id){
         try {
+            System.out.println("teste");
             objeto= dao.getObjectById(id);
         } catch (Exception ex) {
             Logger.getLogger(ControleFicha.class.getName()).log(Level.SEVERE, null, ex);
@@ -176,6 +178,7 @@ public class ControleFicha implements Serializable {
             FacesContext aFacesContext = FacesContext.getCurrentInstance().getCurrentInstance();
             ServletContext context = (ServletContext) aFacesContext.getExternalContext().getContext();
             documento.setVersaoAtual(event.getFile().getContents());
+            documento.setDataVersao(Calendar.getInstance());
             Util.mensagemInformacao("Arquivo enviado com sucesso!");
         } catch (Exception ex) {
             Util.mensagemErro("Erro ao enviar arquivo: " + ex.getMessage());
@@ -205,6 +208,7 @@ public class ControleFicha implements Serializable {
             FacesContext aFacesContext = FacesContext.getCurrentInstance().getCurrentInstance();
             ServletContext context = (ServletContext) aFacesContext.getExternalContext().getContext();
             documento.setRevisao(event.getFile().getContents());
+            documento.setDataRevisao(Calendar.getInstance());
             Util.mensagemInformacao("Arquivo enviado com sucesso!");
         } catch (Exception ex) {
             Util.mensagemErro("Erro ao enviar arquivo: " + ex.getMessage());
